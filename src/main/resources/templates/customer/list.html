@@ -9,11 +9,27 @@
 
 <script>
     function getCustomer(customer) {
-        return `<tr><td >${customer.firstName}</td><td >${customer.lastName}</td>\` +
-                \`<td><a href="/customers/edit/${customer.id}">Edit</a></td>
-                <td><a href="/customers/delete/${customer.id}">Delete</a></td></tr>`
+        return `<tr><td >${customer.firstName}</td><td >${customer.lastName}</td>
+                \<td><a href="${customer.id}" onclick="showFormUpdate(this)">Edit</a></td>
+                <td><a href="${customer.id}" onclick="deleteCustomer(this)">Delete</a></td></tr>`
     }
 
+
+    function deleteCustomer(element){
+        let id = element.getAttribute("href");
+        $.ajax({
+            type: "DELETE",
+            //tên API
+            url: `/customers/`+id,
+            //xử lý khi thành công
+            success: function (){
+                alert("Thanh Cong")
+                successHandle()
+            }
+        });
+        //chặn sự kiện mặc định của thẻ
+        event.preventDefault();
+    }
 
     function successHandle() {
         $.ajax({
@@ -27,25 +43,123 @@
                         <td>Edit</td>
                         <td>Delete</td>
                     </tr>`;
-                for (let i = 0; i < data.length; i++) {
-                    content += getCustomer(data[i]);
+                if (data == null){
+                    document.getElementById("customerList").innerHTML = content;
+                }else {
+                    for (let i = 0; i < data.length; i++) {
+                        content += getCustomer(data[i]);
+                    }
+                    document.getElementById("customerList").innerHTML = content;
                 }
-                document.getElementById("customerList").innerHTML = content;
+
             }
         })
     }
-
     successHandle();
+
+
+    function showFormUpdate(element){
+        let id = element.getAttribute("href");
+        console.log(id);
+        $.ajax({
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            type: "GET",
+            url: `/customers/`+id,
+            success: function (data) {
+                $('#id').attr('value',`${data.id}`)
+                $('#firstName').attr('value',`${data.firstName}`)
+                $('#lastName').attr('value',`${data.lastName}`)
+            }
+        })
+        event.preventDefault();
+    }
+
+
+
+    function addNewCustomer(){
+        let firstName = $('#firstName').val();
+        let lastName = $('#lastName').val();
+        let newCustomer = {
+            firstName: firstName,
+            lastName: lastName
+        }
+
+        $.ajax({
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            type:"POST",
+            data: JSON.stringify(newCustomer),
+            url: "http://localhost:8082/customers",
+            success: function (){
+                alert("Thanh Cong")
+                successHandle()
+            }
+        })
+        event.preventDefault();
+
+    }
+
+    function updateCustomer() {
+        let id = $('#id').val();
+        let firstName= $('#firstName').val();
+        let lastName = $('#lastName').val();
+        let customer={
+            firstName:firstName,
+            lastName:lastName
+        }
+        $.ajax({
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            type: "PUT",
+            url: `/customers/${id}`,
+            data:JSON.stringify(customer),
+            success: function (data) {
+                console.log(data)
+                successHandle();
+            }
+        })
+
+        event.preventDefault();
+    }
 
 </script>
 
 <body>
-<a href="/customers/create">Create new customer</a>
-<br>
+
 <table border="1">
     <h1>Customer List</h1>
-    <table border="1px" id="customerList">
+    <form id="addCustomer">
+        <table>
+            <tr>
+                <td><input type="text" id="id" placeholder="id" hidden></td>
+            </tr>
+            <tr>
+                <td>FirstName:</td>
+                <td><input type="text" id="firstName" placeholder="First Name"></td>
+            </tr>
+            <tr>
+                <td>LastName:</td>
+                <td><input type="text" id="lastName" placeholder="Last Name"></td>
+            </tr>
+            <tr>
+                <td><input id="create" type="submit" value="Create" onclick="addNewCustomer() "></td>
+            </tr>
 
+            <tr>
+        </table>
+        <td><input type="submit" id="update" value="Update" onclick="updateCustomer() "></td>
+        </tr>
+    </form>
+
+
+    <table border="1px" id="customerList">
     </table>
 </table>
 </body>

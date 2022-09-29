@@ -36,7 +36,7 @@ public class CustomerController {
 
 
 
-    @GetMapping("/findById/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<Customer> findById(@PathVariable Long id){
         Optional<Customer> customer =customerService.findById(id);
         if (!customer.isPresent()){
@@ -45,23 +45,13 @@ public class CustomerController {
         return new ResponseEntity<>(customer.get(),HttpStatus.OK);
     }
 
-    @GetMapping("/create")
-    public ModelAndView showCreate(){
-        return new ModelAndView("/customer/create");
-    }
     @PostMapping
     public ResponseEntity<Customer> save(@RequestBody Customer customer){
         return new ResponseEntity<>(customerService.save(customer), HttpStatus.CREATED);
     }
 
 
-    @GetMapping("/edit/{id}")
-    public ModelAndView showUpdate(@PathVariable Long id){
-        ModelAndView modelAndView = new ModelAndView("/customer/edit");
-        modelAndView.addObject("customer", customerService.findById(id));
-        return modelAndView;
-    }
-    @PutMapping("/edit/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<Customer> updateCustomer(@PathVariable Long id,@RequestBody Customer customer){
         Optional<Customer> customerOptional = customerService.findById(id);
         if (!customerOptional.isPresent()) {
@@ -72,13 +62,8 @@ public class CustomerController {
     }
 
 
-    @GetMapping("/delete/{id}")
-    public ModelAndView showDelete(@PathVariable Long id){
-        ModelAndView modelAndView = new ModelAndView("/customer/delete");
-        modelAndView.addObject("customer", customerService.findById(id));
-        return modelAndView;
-    }
-    @DeleteMapping("/delete/{id}")
+
+    @DeleteMapping("/{id}")
     public ResponseEntity<Customer> deleteCustomer(@PathVariable Long id){
         Optional<Customer> customerOptional = customerService.findById(id);
         if (!customerOptional.isPresent()){
@@ -87,5 +72,7 @@ public class CustomerController {
         customerService.remove(id);
         return new ResponseEntity<>(customerOptional.get(),HttpStatus.OK);
     }
+
+
 }
 
