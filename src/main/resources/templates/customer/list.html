@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+
+
+<script>
+    function getCustomer(customer) {
+        return `<tr><td >${customer.firstName}</td><td >${customer.lastName}</td>\` +
+                \`<td><a href="/customers/edit/${customer.id}">Edit</a></td>
+                <td><a href="/customers/delete/${customer.id}">Delete</a></td></tr>`
+    }
+
+
+    function successHandle() {
+        $.ajax({
+            type: "GET",
+            url: "/customers",
+            success: function (data) {
+                let content =
+                    `<tr>
+                        <td>FirstName</td>
+                        <td>LastName</td>
+                        <td>Edit</td>
+                        <td>Delete</td>
+                    </tr>`;
+                for (let i = 0; i < data.length; i++) {
+                    content += getCustomer(data[i]);
+                }
+                document.getElementById("customerList").innerHTML = content;
+            }
+        })
+    }
+
+    successHandle();
+
+</script>
+
+<body>
+<a href="/customers/create">Create new customer</a>
+<br>
+<table border="1">
+    <h1>Customer List</h1>
+    <table border="1px" id="customerList">
+
+    </table>
+</table>
+</body>
+</html>

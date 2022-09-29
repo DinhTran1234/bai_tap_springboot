@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Delete customer</title>
+</head>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+
+<script>
+    function deleteCustomer(){
+        let id = $('#id').val();
+        $.ajax({
+            type: "DELETE",
+            //tên API
+            url: `/customers/delete/`+id,
+            //xử lý khi thành công
+            success: alert("Thanh Cong")
+
+        });
+        //chặn sự kiện mặc định của thẻ
+        event.preventDefault();
+    }
+</script>
+<body>
+<h1>Delete customer</h1>
+<h2>Are you sure?</h2>
+<p>
+    <a href="/customers/list">Customer list</a>
+</p>
+<form>
+    <input th:type="hidden" id="id" th:field="*{customer.id}">
+    <table>
+        <tr>
+            <td>First name:</td>
+            <td><input type="text" th:field="*{customer.firstName}" placeholder="First name" id="firstName" /></td>
+        </tr>
+        <tr>
+            <td>Last name:</td>
+            <td><input type="text" th:field="*{customer.lastName}" placeholder="Last name" id="lastName" /></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td><input type="submit" onclick="deleteCustomer()" value="Delete customer"></td>
+        </tr>
+    </table>
+</form>
+</body>
+</html>
